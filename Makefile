@@ -22,6 +22,9 @@ tag:
 build:
 	$(PYTHON) setup.py sdist bdist_wheel
 
+upload:
+	twine upload dist/*
+
 release:
 	make clean
 	make test
