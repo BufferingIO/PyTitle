@@ -1,5 +1,4 @@
-from typing import Optional, List
-from pydantic import BaseModel
+from typing import List
 
 from pytitle.logger import get_logger
 
@@ -8,7 +7,8 @@ from . import regex
 
 logger = get_logger(__name__)
 
-class Subtitle:
+
+class SrtSubtitle:
     def __init__(
         self,
         path: str = None,
