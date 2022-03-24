@@ -1,11 +1,11 @@
 # Subtitle manipulation library for Python
 
-![PyPI](https://img.shields.io/pypi/v/pytitle)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/pytitle)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pytitle)
-![PyPI - License](https://img.shields.io/pypi/l/pytitle)
-![Read the Docs](https://img.shields.io/readthedocs/pytitle)
-![GitHub issues](https://img.shields.io/github/issues/sina-e/pytitle)
+[![PyPI](https://img.shields.io/pypi/v/pytitle)](https://pypi.org/project/pytitle/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/pytitle)](https://pypi.org/project/pytitle/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pytitle)](https://pypi.org/project/pytitle/)
+[![PyPI - License](https://img.shields.io/pypi/l/pytitle)](https://pypi.org/search/?c=License+%3A%3A+OSI+Approved+%3A%3A+MIT+License)
+[![Read the Docs](https://img.shields.io/readthedocs/pytitle)](https://pytitle.readthedocs.io)
+[![GitHub issues](https://img.shields.io/github/issues/sina-e/pytitle)](https://github.com/sina-e/PyTitle/issues)
 
 PyTitle is a subtitle manipulation library for python, it's built on top of Pydantic.
 
