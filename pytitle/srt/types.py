@@ -1,6 +1,8 @@
 from typing import Literal, Optional
+import re
 
 from pydantic import BaseModel
+from . import regex
 
 
 class Timestamp(BaseModel):
@@ -158,3 +160,18 @@ class Line(BaseModel):
         This is a subtitle
         """
         return f"{self.index}\n{self.timing.output}\n{self.text}\n"
+
+    @classmethod
+    def from_string(cls, linestring: str) -> "Line":
+        """Create a Line object from a string
+
+        :param linestring: the string to create the Line from
+        :type linestring: str
+        :return: the Line object
+        :rtype: Line
+        """
+        line = regex.ONE_LINER.match(linestring)
+        if line is None:
+            raise ValueError(f"{linestring} is not a valid line")
+        index, start, end, text = line.groups()
+        return cls(index=index, timing=Timing.from_string(start, end), text=text)

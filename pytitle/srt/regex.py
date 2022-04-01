@@ -1,5 +1,6 @@
 import re
 
+
 LINE_RE = (
     # group 1
     r"^\s*(\d+:\d+:\d+,\d+)"  # line starts with any number of whitespace
@@ -19,3 +20,7 @@ LINE = re.compile(
     LINE_RE,
     re.MULTILINE,
 )
+
+ONE_LINER_RE = r"^\s*(\d+)\s*\n" + LINE_RE
+
+ONE_LINER = re.compile(ONE_LINER_RE, re.MULTILINE)
