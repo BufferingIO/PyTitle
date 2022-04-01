@@ -174,4 +174,6 @@ class Line(BaseModel):
         if line is None:
             raise ValueError(f"{linestring} is not a valid line")
         index, start, end, text = line.groups()
-        return cls(index=index, timing=Timing.from_string(start, end), text=text)
+        return cls(
+            index=index, timing=Timing.from_string(start, end), text=text.strip()
+        )
