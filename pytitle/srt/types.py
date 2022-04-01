@@ -134,6 +134,7 @@ class Line(BaseModel):
 
     Line consists of a ``index``, ``timing`` and ``text``
     an example formatted line would be::
+
         1
         00:00:00,000 --> 00:00:00,000
         This is a subtitle
