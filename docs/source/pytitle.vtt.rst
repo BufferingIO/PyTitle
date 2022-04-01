@@ -1,4 +1,4 @@
-pytitle.vtt package
+vtt
 ===================
 
 Module contents

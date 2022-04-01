@@ -1,0 +1,4 @@
+Install
+==================
+
+``pip install pytitle``

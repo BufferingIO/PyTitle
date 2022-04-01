@@ -1,4 +1,4 @@
-pytitle.ass package
+ass 
 ===================
 
 Module contents
