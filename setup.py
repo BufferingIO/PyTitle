@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
-import pathlib
-import os
-import re
-import sys
 import importlib
+import pathlib
 
 from setuptools import find_packages, setup
 
@@ -42,7 +39,7 @@ setup(
     url="https://github.com/sina-e/pytitle",
     license="MIT",
     author="Sina Ebrahimi",
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     author_email="ebrahimisina78@gmail.com",
     description="Subtitle manipulation library for python.",
     long_description=get_description(),
@@ -51,7 +48,6 @@ setup(
         "Environment :: Console",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",

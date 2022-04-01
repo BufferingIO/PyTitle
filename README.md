@@ -51,7 +51,7 @@ subtitle.shift_forward(seconds=2)
 or you can shift only one line, for example the 10th line(.srt indexes start at 1):
 
 ```python
-subtitle.shift_forward(index=10, seconds=2)
+subtitle.shift_forward(seconds=2, index=10)
 ```
 
 and when you done editing, save the file:

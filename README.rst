@@ -13,8 +13,7 @@ risk**
 
 what this library can do?
 
-well, it’s able to do a lot of things, and more in the future, but for
-now:
+well, it’s able to do a lot of things, and more in the future, but for now:
 
 -  search for a text or pattern in a subtitle.
 -  shift all the timestaps, or just one timestap to forward or backward.
@@ -59,7 +58,7 @@ start at 1):
 
 .. code:: python
 
-   subtitle.shift_forward(index=10, seconds=2)
+   subtitle.shift_forward(seconds=2, index=10)
 
 and when you done editing, save the file:
 
