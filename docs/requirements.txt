@@ -1,6 +1,0 @@
-pydantic
-sphinx
-sphinx-rtd-theme
-sphinxcontrib-programoutput
-coverage
-pytitle
