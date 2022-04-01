@@ -1,2 +1,2 @@
 from .subtitle import SrtSubtitle  # noqa
-from .types import Duration, Timing, Line  # noqa
+from .types import Line, Timestamp, Timing  # noqa

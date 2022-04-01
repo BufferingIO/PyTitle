@@ -2,13 +2,15 @@ from typing import List
 
 from pytitle.logger import get_logger
 
-from .types import Line, Timing
 from . import regex
+from .types import Line, Timing
 
 logger = get_logger(__name__)
 
 
 class SrtSubtitle:
+    """Subtitle object for .srt formatted subtitles"""
+
     def __init__(
         self,
         path: str = None,
@@ -20,18 +22,35 @@ class SrtSubtitle:
         self.lines: List[Line] = lines
 
     @classmethod
-    def open(cls, path: str = None, encoding: str = "utf-8") -> "Subtitle":
-        """Open subtitle file from a path"""
-        with open(path, "r") as file:
+    def open(cls, path: str = None, encoding: str = "utf-8") -> "SrtSubtitle":
+        """Open subtitle file from a path
+
+        :param path: the path to the subtitle file
+        :type path: str
+        :param encoding: the encoding of the subtitle file
+        :type encoding: str
+        :return: the subtitle object
+        :rtype: SrtSubtitle
+        """
+        with open(path, "r", encoding=encoding) as file:
             filestring = file.read()
             lines = cls.parse(filestring)
-            return cls(path=path, lines=lines)
+            return cls(path=path, lines=lines, encoding=encoding)
 
     @classmethod
     def parse(cls, filestring: str) -> List[Line]:
-        """Parse the string formatted as a srt file"""
+        """Parse the string formatted as a .srt file
+
+        :param filestring: the string of the subtitle file
+        :type filestring: str
+        :return: a list of Line objects
+        :rtype: List[Line]
+        """
         lines = list()
-        for index, match in enumerate(regex.LINE.finditer(filestring), start=1):
+        for index, match in enumerate(
+            regex.LINE.finditer(filestring),
+            start=1,
+        ):
             logger.debug(f"Parsing [index={index}]:")
             start, end, text = match.groups()
             timing = Timing.from_string(start, end)
@@ -46,20 +65,59 @@ class SrtSubtitle:
             lines.append(line)
         return lines
 
-    def save(self, path: str = None) -> str:
-        """Save subtitle to a path"""
-        with open(path, "w+") as file:
+    def save(self, path: str = None, encoding: str = None) -> None:
+        """Save subtitle to a path
+
+        :param path: the path to save the subtitle to
+        :type path: str
+        :param encoding: the encoding of the subtitle file
+        :type encoding: str
+        :return: None
+        :rtype: None
+        """
+        with open(path, "w+", encoding=encoding or self.encoding) as file:
             file.write(self.output)
 
-    def shift(
+    def shift_forward(
         self,
+        seconds: int,
         index: int = None,
     ) -> None:
-        """Shift all or a single line timing backward or forward"""
+        """
+        Shift the timing of a line by index or all
+            lines of subtitle forward by seconds
+
+        :param seconds: the number of seconds to shift
+        :type seconds: int
+        :param index: the index of the line to shift, all lines if None
+        :type index: int
+        :return: None
+        :rtype: None
+        """
+        raise NotImplementedError
+
+    def shift_backward(
+        self,
+        seconds: int,
+        index: int = None,
+    ) -> None:
+        """
+        Shift the timing of a line by index or all
+            lines of subtitle backward by seconds
+
+        :param seconds: the number of seconds to shift
+        :type seconds: int
+        :param index: the index of the line to shift, all lines if None
+        :type index: int
+        :return: None
+        :rtype: None
+        """
         raise NotImplementedError
 
     def search(self, keyword: str, filters: str = None) -> Line:
-        """Serach a keyword in text lines, duration in timings and line index"""
+        """
+        Serach a keyword in text lines, duration in timings and line index
+        """
         raise NotImplementedError
 
     def reindex(self) -> None:
