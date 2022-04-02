@@ -1,4 +1,4 @@
-vtt
+vtt (WebVTT) format
 ===================
 
 Module contents

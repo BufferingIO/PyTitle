@@ -50,13 +50,7 @@ supported formats:
 
    installing
    quick_start
-   pytitle
+   pytitle.srt
+   pytitle.vtt
+   pytitle.ass
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

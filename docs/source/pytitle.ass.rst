@@ -1,5 +1,5 @@
-ass 
-===================
+ass/ssa (SubStation Alpha) format
+=================================
 
 Module contents
 ---------------

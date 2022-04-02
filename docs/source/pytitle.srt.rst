@@ -1,4 +1,4 @@
-srt
+srt (SubRip) Format
 ===================
 
 pytitle.srt.subtitle
