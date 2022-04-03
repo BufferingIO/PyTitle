@@ -1,8 +1,15 @@
-from typing import Literal, Optional
+import os
+import sys
+from typing import Literal, Optional, Union
 
 from pydantic import BaseModel, Field
 
 from . import regex
+
+if sys.version_info >= (3, 9):
+    PathType = Union[Union[str, bytes, os.PathLike[str], os.PathLike[bytes]], int]
+else:
+    PathType = Union[str, bytes, os.PathLike]
 
 
 class Timestamp(BaseModel):
@@ -10,10 +17,10 @@ class Timestamp(BaseModel):
     the Timestamp is rendered as 00:00:00,000 from the ``output`` property
     """
 
-    hours: Optional[int] = Field(0, le=60, ge=0)
-    minutes: Optional[int] = Field(0, le=60, ge=0)
-    seconds: Optional[int] = Field(0, le=60, ge=0)
-    milliseconds: Optional[int] = Field(0, le=999, ge=0)
+    hours: int = Field(0, le=60, ge=0)
+    minutes: int = Field(0, le=60, ge=0)
+    seconds: int = Field(0, le=60, ge=0)
+    milliseconds: int = Field(0, le=999, ge=0)
 
     def __repr__(self) -> str:
         return (
@@ -39,10 +46,12 @@ class Timestamp(BaseModel):
         self.minutes -= obj.minutes
         self.hours -= obj.hours
 
-    def __eq__(self, obj: "Timestamp") -> bool:
+    def __eq__(self, obj: object) -> bool:
         """
         Compare two Timestamp objects for equality with == operator
         """
+        if not isinstance(obj, Timestamp):
+            return NotImplemented
         if (
             self.milliseconds != obj.milliseconds
             and self.seconds != obj.seconds
@@ -52,10 +61,12 @@ class Timestamp(BaseModel):
             return False
         return True
 
-    def __ne__(self, obj: "Timestamp") -> bool:
+    def __ne__(self, obj: object) -> bool:
         """
         Compare two Timestamp objects for non-equality wit != operator
         """
+        if not isinstance(obj, Timestamp):
+            return NotImplemented
         if (
             self.milliseconds == obj.milliseconds
             and self.seconds == obj.seconds
@@ -158,6 +169,8 @@ class Timestamp(BaseModel):
             return self.beautify(property)
         elif property == "milliseconds":
             return self.beautify(property, optimal_length=3, right_append=True)
+        else:
+            raise ValueError(f"{property} is not a valid property")
 
     def beautify(
         self,

@@ -1,9 +1,9 @@
-from typing import List
+from typing import List, Optional, Union
 
 from pytitle.logger import get_logger
 
 from . import regex
-from .types import Line, Timing
+from .types import Line, PathType, Timestamp, Timing
 
 logger = get_logger(__name__)
 
@@ -13,16 +13,20 @@ class SrtSubtitle:
 
     def __init__(
         self,
-        path: str = None,
-        lines: List[Line] = None,
+        path: Optional[PathType] = None,
+        lines: Optional[List[Line]] = None,
         encoding: str = "utf-8",
     ) -> None:
         self.path = path
         self.encoding = encoding
-        self.lines: List[Line] = lines
+        self.lines: Optional[List[Line]] = lines
 
     @classmethod
-    def open(cls, path: str = None, encoding: str = "utf-8") -> "SrtSubtitle":
+    def open(
+        cls,
+        path: PathType,
+        encoding: str = "utf-8",
+    ) -> "SrtSubtitle":
         """Open subtitle file from a path
 
         :param path: the path to the subtitle file
@@ -65,7 +69,11 @@ class SrtSubtitle:
             lines.append(line)
         return lines
 
-    def save(self, path: str = None, encoding: str = None) -> None:
+    def save(
+        self,
+        path: Optional[PathType] = None,
+        encoding: str = None,
+    ) -> None:
         """Save subtitle to a path
 
         :param path: the path to save the subtitle to
@@ -75,8 +83,33 @@ class SrtSubtitle:
         :return: None
         :rtype: None
         """
+        path = path or self.path
+        if path is None:
+            raise ValueError("No path specified")
+
         with open(path, "w+", encoding=encoding or self.encoding) as file:
             file.write(self.output)
+
+    def shift(
+        self,
+        incrby: Union[int, Timestamp],
+        index: Optional[Union[int, List[int], List[Line]]] = None,
+        backward: bool = False,
+    ) -> None:
+        """
+        Shift the timing of a one or multiple lines of subtitle, backward or forward
+
+        :param incrby: the number of seconds or a Timestamp object to shift by
+        :type incrby: Union[int, Timestamp]
+        :param index: the index of a line, list of indexs or list of
+            Line objects to shift
+        :type index: Optional[Union[int, List[int], List[Line]]]
+        :param backward: if True, shift backward, otherwise forward
+        :type backward: bool
+        :return: None
+        :rtype: None
+        """
+        raise NotImplementedError
 
     def shift_forward(
         self,
@@ -140,13 +173,20 @@ class SrtSubtitle:
         """Fix question marks for arabic/persian subtitles"""
         raise NotImplementedError
 
+    def find_overlaps(self) -> List[Line]:
+        """Find overlapping lines in subtitle"""
+        raise NotImplementedError
+
     def __str__(self) -> str:
+        lines = len(self.lines) if self.lines is not None else 0
         return (
-            f"Subtitle(path='{self.path}', "
-            f"lines={len(self.lines)}, "
-            f"encoding='{self.encoding}'"
+            f"Subtitle(path='{self.path!r}'"
+            f"lines={lines} "
+            f"encoding='{self.encoding!r}'"
         )
 
     @property
     def output(self) -> str:
+        if self.lines is None:
+            raise ValueError("No lines to output")
         return "\n".join(line.output for line in self.lines)
