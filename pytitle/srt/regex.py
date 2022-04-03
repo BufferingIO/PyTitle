@@ -1,6 +1,5 @@
 import re
 
-
 LINE_RE = (
     # group 1
     r"^\s*(\d+:\d+:\d+,\d+)"  # line starts with any number of whitespace
