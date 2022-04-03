@@ -1,7 +1,7 @@
 from typing import Literal, Optional
-import re
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
 from . import regex
 
 
@@ -10,16 +10,112 @@ class Timestamp(BaseModel):
     the Timestamp is rendered as 00:00:00,000 from the ``output`` property
     """
 
-    hours: Optional[int] = 0
-    minutes: Optional[int] = 0
-    seconds: Optional[int] = 0
-    milliseconds: Optional[int] = 0
+    hours: Optional[int] = Field(0, le=60, ge=0)
+    minutes: Optional[int] = Field(0, le=60, ge=0)
+    seconds: Optional[int] = Field(0, le=60, ge=0)
+    milliseconds: Optional[int] = Field(0, le=999, ge=0)
 
     def __repr__(self) -> str:
         return (
             f"Timestamp(hours={self.hours}, minutes={self.minutes}, "
             f"seconds={self.seconds}, milliseconds={self.milliseconds})"
         )
+
+    def __add__(self, obj: "Timestamp") -> None:
+        """
+        Add two Timestamp objects together with + operator
+        """
+        self.milliseconds += obj.milliseconds
+        self.seconds += obj.seconds
+        self.minutes += obj.minutes
+        self.hours += obj.hours
+
+    def __sub__(self, obj: "Timestamp") -> None:
+        """
+        Subtract a Timestamp object from another with - oberator
+        """
+        self.milliseconds -= obj.milliseconds
+        self.seconds -= obj.seconds
+        self.minutes -= obj.minutes
+        self.hours -= obj.hours
+
+    def __eq__(self, obj: "Timestamp") -> bool:
+        """
+        Compare two Timestamp objects for equality with == operator
+        """
+        if (
+            self.milliseconds != obj.milliseconds
+            and self.seconds != obj.seconds
+            and self.minutes != obj.minutes
+            and self.hours != obj.hours
+        ):
+            return False
+        return True
+
+    def __ne__(self, obj: "Timestamp") -> bool:
+        """
+        Compare two Timestamp objects for non-equality wit != operator
+        """
+        if (
+            self.milliseconds == obj.milliseconds
+            and self.seconds == obj.seconds
+            and self.minutes == obj.minutes
+            and self.hours == obj.hours
+        ):
+            return False
+        return True
+
+    def __gt__(self, obj: "Timestamp") -> bool:
+        """
+        Check if a Timestamp object is greater than another with > operator
+        """
+        if (
+            self.milliseconds < obj.milliseconds
+            and self.seconds < obj.seconds
+            and self.minutes < obj.minutes
+            and self.hours < obj.hours
+        ):
+            return False
+        return True
+
+    def __lt__(self, obj: "Timestamp") -> bool:
+        """
+        Check if a Timestamp object is less than another with < operator
+        """
+        if (
+            self.milliseconds > obj.milliseconds
+            and self.seconds > obj.seconds
+            and self.minutes > obj.minutes
+            and self.hours > obj.hours
+        ):
+            return False
+        return True
+
+    def __ge__(self, obj: "Timestamp") -> bool:
+        """
+        Check if a Timestamp object is greater than or equal to another with >= operator
+        """
+        if (
+            self.milliseconds >= obj.milliseconds
+            and self.seconds >= obj.seconds
+            and self.minutes >= obj.minutes
+            and self.hours >= obj.hours
+        ):
+            return True
+        return False
+
+    def __le__(self, obj: "Timestamp") -> bool:
+        """
+        Check if a Timestamp object is less than or equal to another with <= operator
+        """
+        if (
+            self.milliseconds <= obj.milliseconds
+            and self.seconds <= obj.seconds
+            and self.minutes <= obj.minutes
+            and self.hours <= obj.hours
+        ):
+            return True
+        return False
 
     @property
     def output(self) -> str:
