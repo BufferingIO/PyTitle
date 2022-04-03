@@ -28,42 +28,31 @@ class Timestamp(BaseModel):
             f"seconds={self.seconds}, milliseconds={self.milliseconds})"
         )
 
-    def __add__(self, obj: "Timestamp") -> None:
+    def __add__(self, obj: "Timestamp") -> "Timestamp":
         """
         Add two Timestamp objects together with + operator
         """
-        self.milliseconds += obj.milliseconds
-        self.seconds += obj.seconds
-        self.minutes += obj.minutes
-        self.hours += obj.hours
+        return Timestamp(
+            hours=self.hours + obj.hours,
+            minutes=self.minutes + obj.minutes,
+            seconds=self.seconds + obj.seconds,
+            milliseconds=self.milliseconds + obj.milliseconds,
+        )
 
-    def __sub__(self, obj: "Timestamp") -> None:
+    def __sub__(self, obj: "Timestamp") -> "Timestamp":
         """
         Subtract a Timestamp object from another with - oberator
         """
-        self.milliseconds -= obj.milliseconds
-        self.seconds -= obj.seconds
-        self.minutes -= obj.minutes
-        self.hours -= obj.hours
+        return Timestamp(
+            hours=self.hours - obj.hours,
+            minutes=self.minutes - obj.minutes,
+            seconds=self.seconds - obj.seconds,
+            milliseconds=self.milliseconds - obj.milliseconds,
+        )
 
     def __eq__(self, obj: object) -> bool:
         """
         Compare two Timestamp objects for equality with == operator
-        """
-        if not isinstance(obj, Timestamp):
-            return NotImplemented
-        if (
-            self.milliseconds != obj.milliseconds
-            and self.seconds != obj.seconds
-            and self.minutes != obj.minutes
-            and self.hours != obj.hours
-        ):
-            return False
-        return True
-
-    def __ne__(self, obj: object) -> bool:
-        """
-        Compare two Timestamp objects for non-equality wit != operator
         """
         if not isinstance(obj, Timestamp):
             return NotImplemented
@@ -73,45 +62,73 @@ class Timestamp(BaseModel):
             and self.minutes == obj.minutes
             and self.hours == obj.hours
         ):
-            return False
-        return True
+            return True
+        return False
+
+    def __ne__(self, obj: object) -> bool:
+        """
+        Compare two Timestamp objects for non-equality wit != operator
+        """
+        if not isinstance(obj, Timestamp):
+            return NotImplemented
+        if (
+            self.milliseconds != obj.milliseconds
+            or self.seconds != obj.seconds
+            or self.minutes != obj.minutes
+            or self.hours != obj.hours
+        ):
+            return True
+        return False
 
     def __gt__(self, obj: "Timestamp") -> bool:
         """
         Check if a Timestamp object is greater than another with > operator
         """
         if (
-            self.milliseconds < obj.milliseconds
-            and self.seconds < obj.seconds
-            and self.minutes < obj.minutes
-            and self.hours < obj.hours
+            self.hours > obj.hours
+            or (self.hours == obj.hours and self.minutes > obj.minutes)
+            or (
+                self.hours == obj.hours
+                and self.minutes == obj.minutes
+                and self.seconds > obj.seconds
+            )
+            or (
+                self.hours == obj.hours
+                and self.minutes == obj.minutes
+                and self.seconds == obj.seconds
+                and self.milliseconds > obj.milliseconds
+            )
         ):
-            return False
-        return True
+            return True
+        return False
 
     def __lt__(self, obj: "Timestamp") -> bool:
         """
         Check if a Timestamp object is less than another with < operator
         """
         if (
-            self.milliseconds > obj.milliseconds
-            and self.seconds > obj.seconds
-            and self.minutes > obj.minutes
-            and self.hours > obj.hours
+            self.hours < obj.hours
+            or (self.hours == obj.hours and self.minutes < obj.minutes)
+            or (
+                self.hours == obj.hours
+                and self.minutes == obj.minutes
+                and self.seconds < obj.seconds
+            )
+            or (
+                self.hours == obj.hours
+                and self.minutes == obj.minutes
+                and self.seconds == obj.seconds
+                and self.milliseconds < obj.milliseconds
+            )
         ):
-            return False
-        return True
+            return True
+        return False
 
     def __ge__(self, obj: "Timestamp") -> bool:
         """
         Check if a Timestamp object is greater than or equal to another with >= operator
         """
-        if (
-            self.milliseconds >= obj.milliseconds
-            and self.seconds >= obj.seconds
-            and self.minutes >= obj.minutes
-            and self.hours >= obj.hours
-        ):
+        if self.__gt__(obj) or self.__eq__(obj):
             return True
         return False
 
@@ -119,12 +136,7 @@ class Timestamp(BaseModel):
         """
         Check if a Timestamp object is less than or equal to another with <= operator
         """
-        if (
-            self.milliseconds <= obj.milliseconds
-            and self.seconds <= obj.seconds
-            and self.minutes <= obj.minutes
-            and self.hours <= obj.hours
-        ):
+        if self.__lt__(obj) or self.__eq__(obj):
             return True
         return False
 
@@ -214,8 +226,8 @@ class Timing(BaseModel):
     start: Timestamp
     end: Timestamp
 
-    def __str__(self) -> str:
-        return f"Timing(start={self.start}, end={self.end})"
+    def __repr__(self) -> str:
+        return f"Timing(start={repr(self.start)}, end={repr(self.end)})"
 
     @property
     def output(self) -> str:

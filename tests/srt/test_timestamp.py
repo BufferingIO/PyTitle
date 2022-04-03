@@ -61,18 +61,17 @@ def test_timestamp_bad_formatting():
     )
 
 
-def test_timestamp_equal_or_not_equal():
+def test_timestamp_eq_ne_not_timestamp():
+    assert (Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456) == 10) is False
+    assert (Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456) != 10) is True
+
+
+def test_timestamp_eq():
     assert Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456) == Timestamp(
         hours=1, minutes=2, seconds=3, milliseconds=456
     )
     assert Timestamp(hours=0, minutes=6, seconds=3, milliseconds=678) == Timestamp(
         hours=0, minutes=6, seconds=3, milliseconds=678
-    )
-    assert Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456) != Timestamp(
-        hours=1, minutes=2, seconds=3, milliseconds=890
-    )
-    assert Timestamp(hours=2, minutes=0, seconds=0, milliseconds=456) != Timestamp(
-        hours=1, minutes=2, seconds=0, milliseconds=456
     )
     assert Timestamp(hours=0, minutes=0, seconds=0, milliseconds=0) == Timestamp(
         hours=0, minutes=0, seconds=0, milliseconds=0
@@ -80,21 +79,58 @@ def test_timestamp_equal_or_not_equal():
     assert Timestamp(hours=1, minutes=25, seconds=39, milliseconds=456) == Timestamp(
         hours=1, minutes=25, seconds=39, milliseconds=456
     )
+
+    assert (
+        Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)
+        == Timestamp(hours=1, minutes=2, seconds=3, milliseconds=890)
+    ) is False
+    assert (
+        Timestamp(hours=2, minutes=0, seconds=0, milliseconds=456)
+        == Timestamp(hours=1, minutes=2, seconds=0, milliseconds=456)
+    ) is False
+    assert (
+        Timestamp(hours=1, minutes=25, seconds=39, milliseconds=456)
+        == Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)
+    ) is False
+
+
+def test_timestamp_ne():
+    assert Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456) != Timestamp(
+        hours=1, minutes=2, seconds=3, milliseconds=890
+    )
+    assert Timestamp(hours=2, minutes=0, seconds=0, milliseconds=456) != Timestamp(
+        hours=1, minutes=2, seconds=0, milliseconds=456
+    )
     assert Timestamp(hours=1, minutes=25, seconds=39, milliseconds=456) != Timestamp(
         hours=1, minutes=2, seconds=3, milliseconds=456
     )
 
+    assert (
+        Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)
+        != Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)
+    ) is False
+    assert (
+        Timestamp(hours=0, minutes=6, seconds=3, milliseconds=678)
+        != Timestamp(hours=0, minutes=6, seconds=3, milliseconds=678)
+    ) is False
+    assert (
+        Timestamp(hours=0, minutes=0, seconds=0, milliseconds=0)
+        != Timestamp(hours=0, minutes=0, seconds=0, milliseconds=0)
+    ) is False
 
-def test_timestamp_greater_or_less():
-    assert Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456) < Timestamp(
-        hours=1, minutes=2, seconds=3, milliseconds=890
-    )
+
+def test_timestamp_gt_ge():
+    assert (
+        Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)
+        > Timestamp(hours=1, minutes=2, seconds=3, milliseconds=890)
+    ) is False
     assert Timestamp(hours=2, minutes=0, seconds=0, milliseconds=456) > Timestamp(
         hours=1, minutes=2, seconds=0, milliseconds=456
     )
-    assert Timestamp(hours=1, minutes=25, seconds=3, milliseconds=456) < Timestamp(
-        hours=1, minutes=25, seconds=39, milliseconds=456
-    )
+    assert (
+        Timestamp(hours=1, minutes=25, seconds=3, milliseconds=456)
+        > Timestamp(hours=1, minutes=25, seconds=39, milliseconds=456)
+    ) is False
     assert Timestamp(hours=1, minutes=25, seconds=39, milliseconds=456) > Timestamp(
         hours=1, minutes=2, seconds=3, milliseconds=456
     )
@@ -102,6 +138,58 @@ def test_timestamp_greater_or_less():
     assert Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456) >= Timestamp(
         hours=1, minutes=2, seconds=3, milliseconds=456
     )
+    assert (
+        Timestamp(hours=0, minutes=6, seconds=3, milliseconds=678)
+        >= Timestamp(hours=1, minutes=6, seconds=3, milliseconds=678)
+    ) is False
+
+
+def test_timestamp_lt_le():
+    assert Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456) < Timestamp(
+        hours=1, minutes=2, seconds=3, milliseconds=890
+    )
+    assert (
+        Timestamp(hours=2, minutes=0, seconds=0, milliseconds=456)
+        < Timestamp(hours=1, minutes=2, seconds=0, milliseconds=456)
+    ) is False
+    assert Timestamp(hours=1, minutes=25, seconds=3, milliseconds=456) < Timestamp(
+        hours=1, minutes=25, seconds=39, milliseconds=456
+    )
+    assert (
+        Timestamp(hours=1, minutes=25, seconds=39, milliseconds=456)
+        < Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)
+    ) is False
+
+    assert (
+        Timestamp(hours=2, minutes=2, seconds=3, milliseconds=456)
+        <= Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)
+    ) is False
     assert Timestamp(hours=0, minutes=6, seconds=3, milliseconds=678) <= Timestamp(
         hours=0, minutes=6, seconds=3, milliseconds=678
+    )
+
+
+def test_timestamp_add():
+    assert Timestamp(minutes=2, seconds=3, milliseconds=456) + Timestamp(
+        hours=1
+    ) == Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)
+    assert Timestamp(minutes=2, seconds=3, milliseconds=456) + Timestamp(
+        hours=1,
+        minutes=2,
+    ) != Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)
+
+
+def test_timestamp_sub():
+    assert Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456) - Timestamp(
+        hours=1
+    ) == Timestamp(hours=0, minutes=2, seconds=3, milliseconds=456)
+    assert Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456) - Timestamp(
+        hours=1,
+        minutes=2,
+    ) != Timestamp(hours=0, minutes=2, seconds=3, milliseconds=456)
+
+
+def test_timestamp_repr():
+    assert repr(Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)) == (
+        "Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)"
     )
