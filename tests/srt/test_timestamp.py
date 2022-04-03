@@ -193,3 +193,13 @@ def test_timestamp_repr():
     assert repr(Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)) == (
         "Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)"
     )
+
+
+def test_timestamp_get_value():
+    timestamp = Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456)
+    assert timestamp.get_value("hours") == "01"
+    assert timestamp.get_value("minutes") == "02"
+    assert timestamp.get_value("seconds") == "03"
+    assert timestamp.get_value("milliseconds") == "456"
+    with pytest.raises(ValueError):
+        timestamp.get_value("foo")
