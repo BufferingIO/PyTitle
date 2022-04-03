@@ -1,3 +1,4 @@
+import pytest
 from pytitle.srt import Line, Timing, Timestamp
 
 
@@ -70,4 +71,27 @@ def test_line_bad_formatting():
             end=Timestamp(hours=1, minutes=2, seconds=4, milliseconds=567),
         ),
         text="Hello, World!",
+    )
+
+
+def test_line_line_not_detected():
+    with pytest.raises(ValueError):
+        Line.from_string("Hello, World!")
+
+
+def test_line_repr():
+    assert repr(
+        Line(
+            index=1,
+            timing=Timing(
+                start=Timestamp(hours=0, minutes=0, seconds=0, milliseconds=0),
+                end=Timestamp(hours=0, minutes=0, seconds=0, milliseconds=0),
+            ),
+            text="Hello, World!",
+        )
+    ) == (
+        "Line(index=1, timing=Timing(start="
+        "Timestamp(hours=0, minutes=0, seconds=0, milliseconds=0), "
+        "end=Timestamp(hours=0, minutes=0, seconds=0, milliseconds=0)), "
+        "text='Hello, World!')"
     )
