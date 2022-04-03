@@ -3,6 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/pytitle)](https://pypi.org/project/pytitle/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/pytitle)](https://pypi.org/project/pytitle/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pytitle)](https://pypi.org/project/pytitle/)
+[![Codecov coverage](https://img.shields.io/codecov/c/github/sina-e/PyTitle)](https://app.codecov.io/gh/sina-e/PyTitle/)
 [![PyPI - License](https://img.shields.io/pypi/l/pytitle)](https://pypi.org/search/?c=License+%3A%3A+OSI+Approved+%3A%3A+MIT+License)
 [![Read the Docs](https://img.shields.io/readthedocs/pytitle)](https://pytitle.readthedocs.io)
 [![GitHub issues](https://img.shields.io/github/issues/sina-e/pytitle)](https://github.com/sina-e/PyTitle/issues)
