@@ -23,3 +23,5 @@ jobs:
           python -m pip install tox tox-gh-actions
       - name:
         run: tox
+      - name: Upload coverage
+        uses: codecov/codecov-action@v2
