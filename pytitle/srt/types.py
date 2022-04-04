@@ -255,7 +255,7 @@ class Timing(BaseModel):
 class Line(BaseModel):
     """Line object for a subtitle
 
-    Line consists of a ``index``, ``timing`` and ``text``
+    Line consists of ``index``, ``timing`` and ``text``
     an example formatted line would be::
 
         1
@@ -275,10 +275,12 @@ class Line(BaseModel):
 
     @property
     def output(self) -> str:
-        """output the line in the format of::
-        1
-        00:00:00,000 --> 00:00:00,000
-        This is a subtitle
+        """
+        output the line in the format of::
+
+            1
+            00:00:00,000 --> 00:00:00,000
+            This is a subtitle
         """
         return f"{self.index}\n{self.timing.output}\n{self.text}\n"
 
