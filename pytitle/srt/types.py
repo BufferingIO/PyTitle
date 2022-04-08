@@ -5,6 +5,7 @@ from typing import Literal, Optional, Union
 from pydantic import BaseModel, Field
 
 from . import regex
+from . import exceptions
 
 if sys.version_info >= (3, 9):
     PathType = Union[Union[str, bytes, os.PathLike[str], os.PathLike[bytes]], int]
@@ -17,10 +18,10 @@ class Timestamp(BaseModel):
     the Timestamp is rendered as 00:00:00,000 from the ``output`` property
     """
 
-    hours: int = Field(0, le=60, ge=0)
-    minutes: int = Field(0, le=60, ge=0)
-    seconds: int = Field(0, le=60, ge=0)
-    milliseconds: int = Field(0, le=999, ge=0)
+    hours: int = Field(0, ge=0)
+    minutes: int = Field(0, lt=60, ge=0)
+    seconds: int = Field(0, lt=60, ge=0)
+    milliseconds: int = Field(0, lt=1000, ge=0)
 
     def __repr__(self) -> str:
         return (
@@ -32,53 +33,52 @@ class Timestamp(BaseModel):
         """
         Add two Timestamp objects together with + operator
         """
-        return Timestamp(
-            hours=self.hours + obj.hours,
-            minutes=self.minutes + obj.minutes,
-            seconds=self.seconds + obj.seconds,
-            milliseconds=self.milliseconds + obj.milliseconds,
-        )
+        overflow_const = [1000, 60, 60, float("inf")]
+        attrs = ["milliseconds", "seconds", "minutes", "hours"]
+        overflow = 0
+        for attr, ov_const in zip(attrs, overflow_const):
+            # loop through each attribute in order and add the
+            # attribute value of self + attribute value of obj + overflow
+            # if the result is greater than the overflow constant,
+            # add 1 to the overflow and subtract the overflow constant from the result
+            # this way we can make sure that the values stay in range
+            # for example if the result of seconds is 70,,
+            # set the seconds to 10 and add 1 to minutes
+            t = getattr(self, attr) + getattr(obj, attr) + overflow
+            overflow = 0
+            if t >= ov_const:
+                overflow = t // ov_const
+            setattr(self, attr, int(t % ov_const))
+        return self
 
     def __sub__(self, obj: "Timestamp") -> "Timestamp":
         """
         Subtract a Timestamp object from another with - oberator
         """
+        milliseconds = self.milliseconds - obj.milliseconds
+        if milliseconds < 0:
+            milliseconds += 1000
+            self.seconds -= 1
+        seconds = self.seconds - obj.seconds
+        if seconds < 0:
+            seconds += 60
+            self.minutes -= 1
+        minutes = self.minutes - obj.minutes
+        if minutes < 0:
+            minutes += 60
+            self.hours -= 1
+        hours = self.hours - obj.hours
+        if hours < 0:
+            raise exceptions.NegativeTimestampError(
+                "Timestamp subtraction reached negative value"
+            )
+
         return Timestamp(
-            hours=self.hours - obj.hours,
-            minutes=self.minutes - obj.minutes,
-            seconds=self.seconds - obj.seconds,
-            milliseconds=self.milliseconds - obj.milliseconds,
+            hours=hours,
+            minutes=minutes,
+            seconds=seconds,
+            milliseconds=milliseconds,
         )
-
-    def __eq__(self, obj: object) -> bool:
-        """
-        Compare two Timestamp objects for equality with == operator
-        """
-        if not isinstance(obj, Timestamp):
-            return NotImplemented
-        if (
-            self.milliseconds == obj.milliseconds
-            and self.seconds == obj.seconds
-            and self.minutes == obj.minutes
-            and self.hours == obj.hours
-        ):
-            return True
-        return False
-
-    def __ne__(self, obj: object) -> bool:
-        """
-        Compare two Timestamp objects for non-equality wit != operator
-        """
-        if not isinstance(obj, Timestamp):
-            return NotImplemented
-        if (
-            self.milliseconds != obj.milliseconds
-            or self.seconds != obj.seconds
-            or self.minutes != obj.minutes
-            or self.hours != obj.hours
-        ):
-            return True
-        return False
 
     def __gt__(self, obj: "Timestamp") -> bool:
         """

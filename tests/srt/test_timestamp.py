@@ -1,5 +1,5 @@
 import pytest
-from pytitle.srt import Timestamp
+from pytitle.srt import Timestamp, exceptions
 from pydantic import ValidationError
 
 
@@ -10,8 +10,6 @@ def test_timestamp_generation():
         hours=1, minutes=25, seconds=39, milliseconds=456
     ).output == "01:25:39,456"
 
-    with pytest.raises(ValidationError):
-        Timestamp(hours=61, minutes=0, seconds=0, milliseconds=0)
     with pytest.raises(ValidationError):
         Timestamp(hours=0, minutes=66, seconds=0, milliseconds=0)
     with pytest.raises(ValidationError):
@@ -187,6 +185,14 @@ def test_timestamp_sub():
         hours=1,
         minutes=2,
     ) != Timestamp(hours=0, minutes=2, seconds=3, milliseconds=456)
+    assert Timestamp(minutes=2, seconds=3, milliseconds=456) - Timestamp(
+        seconds=55, milliseconds=800
+    ) == Timestamp(minutes=1, seconds=7, milliseconds=656)
+
+
+def test_timestamp_negative_timestamp_error():
+    with pytest.raises(exceptions.NegativeTimestampError):
+        Timestamp(minutes=3, seconds=10) - Timestamp(minutes=5)
 
 
 def test_timestamp_repr():
