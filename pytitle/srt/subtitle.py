@@ -2,7 +2,7 @@ from typing import List, Optional, Union
 
 from pytitle.logger import get_logger
 
-from . import regex
+from . import regex, exceptions
 from .types import Line, PathType, Timestamp, Timing
 
 logger = get_logger(__name__)
@@ -85,67 +85,128 @@ class SrtSubtitle:
         """
         path = path or self.path
         if path is None:
-            raise ValueError("No path specified")
+            raise exceptions.SrtSaveError("No path specified")
 
         with open(path, "w+", encoding=encoding or self.encoding) as file:
             file.write(self.output)
 
     def shift(
         self,
-        incrby: Union[int, Timestamp],
-        index: Optional[Union[int, List[int], List[Line]]] = None,
+        shift_by: Timestamp,
+        indexes: List[int] = None,
+        lines: Optional[List[Line]] = None,
         backward: bool = False,
+        start: bool = True,
+        end: bool = True,
     ) -> None:
         """
-        Shift the timing of a one or multiple lines of subtitle, backward or forward
+        Shift the timing of one or multiple lines of subtitle, backward or forward
 
-        :param incrby: the number of seconds or a Timestamp object to shift by
-        :type incrby: Union[int, Timestamp]
-        :param index: the index of a line, list of indexs or list of
-            Line objects to shift
-        :type index: Optional[Union[int, List[int], List[Line]]]
+        :param shift_by: Timestamp object to shift by
+        :type shift_by: Timestamp
+        :param indexes: the index of a lines to shift, all lines if None
+        :type indexes: List[int]
+        :param lines: the lines to shift, all lines if None
+        :type lines: List[Line]
         :param backward: if True, shift backward, otherwise forward
         :type backward: bool
         :return: None
         :rtype: None
         """
-        raise NotImplementedError
+        if lines is None:
+            if self.lines is None:
+                raise ValueError("SrtSubtitle.lines is None and no lines specified")
+            lines = self.lines
+
+        if indexes is not None:
+            lines = Line.get_lines(lines, indexes)
+
+        for line in lines:
+            line.timing.shift(shift_by, backward=backward, start=start, end=end)
 
     def shift_forward(
         self,
-        seconds: int,
-        index: int = None,
+        hours: int = 0,
+        minutes: int = 0,
+        seconds: int = 0,
+        milliseconds: int = 0,
+        index: Union[int, List[int]] = None,
+        lines: Optional[List[Line]] = None,
     ) -> None:
         """
         Shift the timing of a line by index or all
-            lines of subtitle forward by seconds
+            lines of subtitle forward by hour, minutes, seconds, milliseconds
+        shortcut for SrtSubtitle.shift(...)
 
+        :param hours: the number of hours to shift
+        :type hours: int
+        :param minutes: the number of minutes to shift
+        :type minutes: int
         :param seconds: the number of seconds to shift
         :type seconds: int
+        :param milliseconds: the number of milliseconds to shift
+        :type milliseconds: int
         :param index: the index of the line to shift, all lines if None
-        :type index: int
+        :type index: Union[int, List[int]]
+        :lines: the lines to shift, all lines if None
+        :type lines: List[Line]
         :return: None
         :rtype: None
         """
-        raise NotImplementedError
+        if isinstance(index, int):
+            index = [index]
+        if all([hours == 0, minutes == 0, seconds == 0, milliseconds == 0]):
+            raise ValueError("No time specified")
+        return self.shift(
+            Timestamp(
+                hours=hours, minutes=minutes, seconds=seconds, milliseconds=milliseconds
+            ),
+            indexes=index,
+            lines=lines,
+        )
 
     def shift_backward(
         self,
-        seconds: int,
-        index: int = None,
+        hours: int = 0,
+        minutes: int = 0,
+        seconds: int = 0,
+        milliseconds: int = 0,
+        index: Union[int, List[int]] = None,
+        lines: Optional[List[Line]] = None,
     ) -> None:
         """
         Shift the timing of a line by index or all
-            lines of subtitle backward by seconds
+            lines of subtitle backward by hour, minutes, seconds, milliseconds
+        shortcut for SrtSubtitle.shift(...)
 
+        :param hours: the number of hours to shift
+        :type hours: int
+        :param minutes: the number of minutes to shift
+        :type minutes: int
         :param seconds: the number of seconds to shift
         :type seconds: int
+        :param milliseconds: the number of milliseconds to shift
+        :type milliseconds: int
         :param index: the index of the line to shift, all lines if None
-        :type index: int
+        :type index: Union[int, List[int]]
+        :lines: the lines to shift, all lines if None
+        :type lines: List[Line]
         :return: None
         :rtype: None
         """
-        raise NotImplementedError
+        if all([hours == 0, minutes == 0, seconds == 0, milliseconds == 0]):
+            raise ValueError("No time specified")
+
+        if isinstance(index, int):
+            index = [index]
+        return self.shift(
+            Timestamp(
+                hours=hours, minutes=minutes, seconds=seconds, milliseconds=milliseconds
+            ),
+            indexes=index,
+            lines=lines,
+            backward=True,
+        )
 
     def search(self, keyword: str, filters: str = None) -> Line:
         """
@@ -177,12 +238,12 @@ class SrtSubtitle:
         """Find overlapping lines in subtitle"""
         raise NotImplementedError
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         lines = len(self.lines) if self.lines is not None else 0
         return (
-            f"Subtitle(path='{self.path!r}'"
-            f"lines={lines} "
-            f"encoding='{self.encoding!r}'"
+            f"SrtSubtitle(path={self.path!r}, "
+            f"lines={lines}, "
+            f"encoding={self.encoding!r}"
         )
 
     @property
