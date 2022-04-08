@@ -1,3 +1,4 @@
+import pytest
 from pytitle.srt import Timing, Timestamp
 
 
@@ -62,3 +63,12 @@ def test_timing_bad_formatting():
         start=Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456),
         end=Timestamp(hours=1, minutes=2, seconds=4, milliseconds=567),
     )
+
+
+def test_timing_shift_start_and_end_none():
+    t = Timing(
+        start=Timestamp(hours=1, minutes=2, seconds=3, milliseconds=456),
+        end=Timestamp(hours=1, minutes=2, seconds=4, milliseconds=567),
+    )
+    with pytest.raises(ValueError):
+        t.shift(Timestamp(seconds=10), start=False, end=False)

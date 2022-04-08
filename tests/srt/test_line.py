@@ -1,5 +1,7 @@
+import copy
 import pytest
-from pytitle.srt import Line, Timing, Timestamp
+from pytitle.srt import SrtSubtitle, Line, Timing, Timestamp
+from .subs.sample import sample_lines
 
 
 def test_line_generation():
@@ -95,3 +97,15 @@ def test_line_repr():
         "end=Timestamp(hours=0, minutes=0, seconds=0, milliseconds=0)), "
         "text='Hello, World!')"
     )
+
+
+def test_line_get_lines_out_of_range():
+    lines = copy.deepcopy(sample_lines)
+    with pytest.raises(IndexError):
+        Line.get_lines(lines, [6])
+
+
+def test_line_inxes_dont_match_lines():
+    lines = copy.deepcopy(sample_lines)
+    with pytest.raises(IndexError):
+        Line.get_lines(lines, [1, 2, 3, 4, 5, 6], check_contains=True)

@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import Literal, Optional, Union
+from typing import Literal, Optional, Union, List
 
 from pydantic import BaseModel, Field
 
@@ -251,6 +251,39 @@ class Timing(BaseModel):
             end=Timestamp.from_string(end),
         )
 
+    def shift(
+        self,
+        shift_by: Timestamp,
+        backward: bool = False,
+        start: bool = True,
+        end: bool = True,
+    ) -> None:
+        """Shift the timing by a Timestamp
+
+        :param shift_by: the Timestamp to shift the timing by
+        :type shift_by: Timestamp
+        :param backward: shift the timing backward instead of forward
+        :type backward: bool
+        :param start: shift the start Timestamp
+        :type start: bool
+        :param end: shift the end Timestamp
+        :type end: bool
+        :return: None
+        :rtype: None
+        """
+        if all([not start, not end]):
+            raise ValueError("At least one of start or end must be True")
+        if backward:
+            if start:
+                self.start -= shift_by
+            if end:
+                self.end -= shift_by
+        else:
+            if start:
+                self.start += shift_by
+            if end:
+                self.end += shift_by
+
 
 class Line(BaseModel):
     """Line object for a subtitle
@@ -300,3 +333,28 @@ class Line(BaseModel):
         return cls(
             index=index, timing=Timing.from_string(start, end), text=text.strip()
         )
+
+    @classmethod
+    def get_lines(
+        cls, lines: List["Line"], index: List[int], check_contains: bool = False
+    ) -> List["Line"]:
+        """
+        get line objects from index of them
+
+        :param lines: the index of the lines to get
+        :type lines: List[int]
+        :param index: the index of the lines to get
+        :type index: List[int]
+        :param check_contains: check if all the indexes are in the lines
+        :type check_contains: bool
+        :return: the lines
+        :rtype: List[Line]
+        """
+        lines = [line for line in lines if line.index in set(index)]
+        if check_contains and len(lines) != len(index):
+            raise IndexError(
+                f"{index} contains lines that do not exist in the subtitle"
+            )
+        if len(lines) < 1:
+            raise IndexError("No lines were found")
+        return lines
