@@ -28,5 +28,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 [Unreleased]: https://github.com/sina-e/PyTitle/compare/v0.1.6...HEAD
-[0.1.6]: https://github.com/sina-e/PyTitle/compare/v0.1.5...v.0.1.6
-[0.1.5]: https://github.com/sina-e/PyTitle/compare/v0.1.4...v.0.1.5
+[0.1.6]: https://github.com/sina-e/PyTitle/compare/v0.1.5...v0.1.6
+[0.1.5]: https://github.com/sina-e/PyTitle/compare/v0.1.4...v0.1.5
