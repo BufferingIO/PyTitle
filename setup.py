@@ -21,7 +21,7 @@ def get_description():
     :return: description
     :rtype: str
     """
-    with open("README.rst", "r", encoding="utf-8") as f:
+    with open("README.md", "r", encoding="utf-8") as f:
         return f.read()
 
 
@@ -43,6 +43,7 @@ setup(
     author_email="ebrahimisina78@gmail.com",
     description="Subtitle manipulation library for python.",
     long_description=get_description(),
+    long_description_content_type="text/markdown",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Environment :: Console",
