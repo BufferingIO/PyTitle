@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import Literal, Optional, Union, List
+from typing import Literal, Optional, Union, List, Tuple
 
 from pydantic import BaseModel, Field
 
@@ -358,3 +358,36 @@ class Line(BaseModel):
         if len(lines) < 1:
             raise IndexError("No lines were found")
         return lines
+
+
+class Encodings:
+    """
+    Encodings class.
+    """
+
+    # Encodings in order of probability of being the correct encoding
+    UTF_8 = "utf-8"
+    CP1252 = "cp1252"
+    CP1256 = "cp1256"
+    UTF_16 = "utf-16"
+    UTF_32 = "utf-32"
+
+    @classmethod
+    def get_encoding(cls, index: int) -> Tuple[Optional[str], Optional[int]]:
+        """
+        Get encoding by index.
+
+        :param index: the index of the encoding
+        :type index: int
+        :return: the encoding and the index of the next encoding
+        :rtype: Tuple[Optional[Encoding], Optional[int]]
+        """
+        if index is None:
+            return None, None
+        try:
+            encoding = [
+                val for key, val in cls.__dict__.items() if not key.startswith("_")
+            ][index]
+        except IndexError:
+            return None, None
+        return encoding, index + 1

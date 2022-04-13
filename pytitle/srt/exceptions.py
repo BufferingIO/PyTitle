@@ -12,3 +12,11 @@ class NegativeTimestampError(SrtError):
 
 class SrtSaveError(SrtError):
     """Raised when SrtSubtitle.save() fails."""
+
+
+class SrtOpenError(SrtError):
+    """Raised when SrtSubtitle.open() fails."""
+
+
+class SrtEncodingDetectError(SrtOpenError):
+    """Raised when SrtSubtitle.open() fails to detect the encoding."""

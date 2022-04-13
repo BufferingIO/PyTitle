@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 from pytitle.logger import get_logger
 
 from . import regex, exceptions
-from .types import Line, PathType, Timestamp, Timing
+from .types import Line, PathType, Timestamp, Timing, Encodings
 
 logger = get_logger(__name__)
 
@@ -15,7 +15,7 @@ class SrtSubtitle:
         self,
         path: Optional[PathType] = None,
         lines: Optional[List[Line]] = None,
-        encoding: str = "utf-8",
+        encoding: Optional[str] = "utf-8",
     ) -> None:
         self.path = path
         self.encoding = encoding
@@ -25,19 +25,46 @@ class SrtSubtitle:
     def open(
         cls,
         path: PathType,
-        encoding: str = "utf-8",
+        encoding: Optional[str] = "utf-8",
+        use_chardet: bool = False,
+        **kwargs,
     ) -> "SrtSubtitle":
         """Open subtitle file from a path
 
         :param path: the path to the subtitle file
         :type path: str
         :param encoding: the encoding of the subtitle file
-        :type encoding: str
+        :type encoding: Optional[str]
+        :param use_chardet: if True, use chardet to
+            detect the encoding if 'utf-8' failed
+        :type use_chardet: bool
         :return: the subtitle object
         :rtype: SrtSubtitle
         """
         with open(path, "r", encoding=encoding) as file:
-            filestring = file.read()
+            try:
+                filestring = file.read()
+            except UnicodeDecodeError:
+                logger.debug(
+                    f"Unable to decode file {path!r} with encoding"
+                    f" {encoding!r}, trying to detect the encoding"
+                )
+                enc_index = kwargs.get("enc_index", 0)
+                if encoding == "utf-8":
+                    # don't try the utf-8 again if its default
+                    enc_index += 1
+                encoding, enc_index = Encodings.get_encoding(enc_index)
+                if encoding:
+                    return cls.open(path=path, encoding=encoding, enc_index=enc_index)
+                else:
+                    logger.debug(f"Unable to detect encoding for file {path!r}")
+                    if use_chardet:
+                        logger.debug("Trying to use chardet to detect encoding")
+                        # TODO: use chardet to detect encoding
+                        raise NotImplementedError
+                    raise exceptions.SrtEncodingDetectError(
+                        f"Unable to detect encoding for {path!r}"
+                    )
             lines = cls.parse(filestring)
             return cls(path=path, lines=lines, encoding=encoding)
 
