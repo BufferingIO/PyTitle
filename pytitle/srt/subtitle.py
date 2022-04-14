@@ -27,7 +27,7 @@ class SrtSubtitle:
         path: PathType,
         encoding: Optional[str] = "utf-8",
         use_chardet: bool = False,
-        fallback_encodings: Optional[Encodings] = Encodings(),
+        fallback_encodings: Encodings = Encodings(),
         **kwargs,
     ) -> "SrtSubtitle":
         """Open subtitle file from a path
