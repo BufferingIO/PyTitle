@@ -372,8 +372,17 @@ class Encodings:
     UTF_16 = "utf-16"
     UTF_32 = "utf-32"
 
-    @classmethod
-    def get_encoding(cls, index: int) -> Tuple[Optional[str], Optional[int]]:
+    def __init__(self, encodings: Optional[List[str]] = None) -> None:
+        if encodings:
+            self.encodings = encodings
+        else:
+            self.encodings = [
+                val
+                for key, val in type(self).__dict__.items()
+                if not (key.startswith("_") or callable(val))
+            ]
+
+    def get_encoding(self, index: int) -> Tuple[Optional[str], Optional[int]]:
         """
         Get encoding by index.
 
@@ -385,9 +394,7 @@ class Encodings:
         if index is None:
             return None, None
         try:
-            encoding = [
-                val for key, val in cls.__dict__.items() if not key.startswith("_")
-            ][index]
+            encoding = self.encodings[index]
         except IndexError:
             return None, None
         return encoding, index + 1

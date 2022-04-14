@@ -27,6 +27,7 @@ class SrtSubtitle:
         path: PathType,
         encoding: Optional[str] = "utf-8",
         use_chardet: bool = False,
+        fallback_encodings: Optional[Encodings] = Encodings(),
         **kwargs,
     ) -> "SrtSubtitle":
         """Open subtitle file from a path
@@ -53,7 +54,7 @@ class SrtSubtitle:
                 if encoding == "utf-8":
                     # don't try the utf-8 again if its default
                     enc_index += 1
-                encoding, enc_index = Encodings.get_encoding(enc_index)
+                encoding, enc_index = fallback_encodings.get_encoding(enc_index)
                 if encoding:
                     return cls.open(path=path, encoding=encoding, enc_index=enc_index)
                 else:

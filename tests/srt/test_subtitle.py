@@ -2,8 +2,7 @@ import os
 import copy
 import pytest
 
-from pytitle.srt import SrtSubtitle, Timestamp
-from pytitle.srt import exceptions
+from pytitle.srt import SrtSubtitle, Timestamp, Encodings, exceptions
 from .subs.sample import sample_lines
 
 subtitles_dir = os.path.join(
@@ -18,6 +17,32 @@ def test_srt_parse():
     )
     sub = SrtSubtitle.open(path)
     assert len(sub.lines) == 741
+
+
+def test_srt_parse_bad_encoding():
+    path = os.path.join(subtitles_dir, "Grown Ups.2010.R5.LiNE.Xvid {1337x}-Noir.srt")
+    sub = SrtSubtitle.open(path)
+    assert len(sub.lines) == 1373
+
+
+def test_srt_parse_bad_encoding_not_detected():
+    path = os.path.join(
+        subtitles_dir,
+        "Grown Ups.2010.R5.LiNE.Xvid {1337x}-Noir.srt",
+    )
+    with pytest.raises(exceptions.SrtEncodingDetectError):
+        SrtSubtitle.open(path=path, fallback_encodings=Encodings(["utf-8"]))
+
+
+def test_srt_parse_bad_encoding_use_chardet():
+    path = os.path.join(
+        subtitles_dir,
+        "Grown Ups.2010.R5.LiNE.Xvid {1337x}-Noir.srt",
+    )
+    with pytest.raises(NotImplementedError):
+        SrtSubtitle.open(
+            path=path, use_chardet=True, fallback_encodings=Encodings(["utf-8"])
+        )
 
 
 def test_srt_save(tmpdir):
