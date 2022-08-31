@@ -1,0 +1,58 @@
+[tool.poetry]
+name = "pytitle"
+version = "0.1.6"
+description = "Subtitle manipulation library for python."
+authors = ["Sina Ebrahimi <ebrahimisina78@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/BufferingIO/PyTitle"
+keywords = [
+    "subtitle",
+    "subtitles",
+    "subtitle-manipulation",
+    "subtitle-manipulation-library",
+    "subtitle-manipulation-python",
+    "srt-subtitles",
+    "vtt-subtitles",
+    "ssa-subtitles",
+    "ass-subtitles",
+    "srt",
+    "vtt",
+    "ass",
+    "ssa",
+    "subtitle-edit",
+    "subtitle-editor",
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pydantic = "^1.9.0"
+
+[tool.poetry.dev-dependencies]
+black = "22.1.0"
+flake8 = "4.0.1"
+pytest = "7.1.1"
+pytest-cov = "3.0.0"
+tox = "3.24.5"
+mypy = "0.942"
+Sphinx = "^5.1.1"
+sphinx-rtd-theme = "^1.0.0"
+sphinxcontrib-programoutput = "^0.17"
+coverage = "^6.4.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/BufferingIO/PyTitle/issues"
+"Documentation" = "https://pytitle.readthedocs.io"
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+line_length = 88
+
+[tool.flake8]
+max_line_length = 88
