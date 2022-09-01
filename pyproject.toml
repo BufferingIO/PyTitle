@@ -7,20 +7,12 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/BufferingIO/PyTitle"
 keywords = [
-    "subtitle",
     "subtitles",
     "subtitle-manipulation",
-    "subtitle-manipulation-library",
-    "subtitle-manipulation-python",
     "srt-subtitles",
     "vtt-subtitles",
     "ssa-subtitles",
     "ass-subtitles",
-    "srt",
-    "vtt",
-    "ass",
-    "ssa",
-    "subtitle-edit",
     "subtitle-editor",
 ]
 
